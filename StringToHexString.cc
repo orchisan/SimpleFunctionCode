@@ -4,6 +4,12 @@
 
 #define MAX_DEST_STRING_LENGTH      100
 
+#ifdef ENABLE_DEBUG_PRINT
+#define PRINT printf
+#else
+#define PRINT
+#endif
+
 unsigned char charToHexChar(unsigned char ch)
 {	
 	if (ch <= 'F' && ch >= 'A')  {
@@ -13,7 +19,7 @@ unsigned char charToHexChar(unsigned char ch)
 	} else if (ch <= '9' && ch >= '0') {
 		return  (ch - '0');
 	} else {
-		printf("unknow character 0x%x", ch);
+		PRINT("unknow character 0x%x", ch);
 		return 0xFF;
 	}
 }
@@ -28,7 +34,7 @@ char stringToHexString(unsigned char *pSrcStr, unsigned int len, unsigned char *
 	// check string to sure it is hex string
 	for(int i = 0; i < len; i++) {
 		if (0xFF == charToHexChar(pSrcStr[i])) {
-			printf("input string not hex string, please check it!");
+			PRINT("input string not hex string, please check it!");
 			return -1;
 		}
 	}
@@ -40,10 +46,12 @@ char stringToHexString(unsigned char *pSrcStr, unsigned int len, unsigned char *
 	}
 
 	// output hex string
+	printf("Dest Hex String : 0x");
 	*pOutLen = len/2;
 	for(int i = 0; i < *pOutLen; i++) {
 		printf("%02X", pDestStr[i]);
 	}
+
 	return 0;
 }
 
@@ -54,18 +62,18 @@ int main(int argc, char* argv[])
 	unsigned int destStrLen = 0;
 
 	if(argc < 1) {
-		printf("Using as: 'C00100080000010000FF02'\n");
+		PRINT("Using as: 'C00100080000010000FF02'\n");
 		return -1;
 	} else {
-		printf("argc %d, len %d: ", argc, strlen(argv[1]));
+		PRINT("argc %d, len %d: ", argc, strlen(argv[1]));
 		for(int i = 0; i < strlen(argv[1]); i++) {
-			printf("%C", argv[1][i]);
+			PRINT("%C", argv[1][i]);
 		}
-		printf("\r\n");
+		PRINT("\r\n");
 	}
 
 	if(-1 == stringToHexString((unsigned char *)argv[1], strlen(argv[1]), destStr, &destStrLen)) {
-		printf("conveter failed!");
+		PRINT("conveter failed!");
 		return -1;
 	}
 	
